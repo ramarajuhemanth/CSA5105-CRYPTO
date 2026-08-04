@@ -1,0 +1,44 @@
+def mod_inverse(a: int, m: int = 26) -> int:
+    a %= m
+    for x in range(1, m):
+        if (a * x) % m == 1:
+            return x
+    raise ValueError(f"{a} has no inverse mod {m}")
+
+
+def recover_key():
+    p1, c1 = ord('e') - ord('a'), ord('B') - ord('A')  # 4, 1
+    p2, c2 = ord('t') - ord('a'), ord('U') - ord('A')  # 19, 20
+
+    diff_p = (p2 - p1) % 26          # 15
+    diff_c = (c2 - c1) % 26          # 19
+    diff_p_inv = mod_inverse(diff_p)
+
+    a = (diff_c * diff_p_inv) % 26
+    b = (c1 - a * p1) % 26
+    return a, b
+
+
+def affine_decrypt(text: str, a: int, b: int) -> str:
+    a_inv = mod_inverse(a)
+    result = []
+    for ch in text:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            c = ord(ch) - base
+            result.append(chr((a_inv * (c - b)) % 26 + base))
+        else:
+            result.append(ch)
+    return "".join(result)
+
+
+def main():
+    a, b = recover_key()
+    print(f"Recovered key: a = {a}, b = {b}")
+
+    ciphertext = input("Enter ciphertext to decrypt: ")
+    print("Plaintext:", affine_decrypt(ciphertext, a, b))
+
+
+if __name__ == "__main__":
+    main()
