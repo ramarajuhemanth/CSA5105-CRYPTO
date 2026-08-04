@@ -1,0 +1,48 @@
+import numpy as np
+
+def mod_inverse(a, m):
+    a %= m
+    for i in range(1, m):
+        if (a*i) % m == 1:
+            return i
+    raise ValueError("no inverse")
+
+def matrix_mod_inv(matrix, mod):
+    det = int(round(np.linalg.det(matrix))) % mod
+    det_inv = mod_inverse(det, mod)
+    adj = np.array([[matrix[1][1], -matrix[0][1]],
+                     [-matrix[1][0], matrix[0][0]]])
+    return (det_inv * adj) % mod
+
+def text_to_nums(text):
+    return [ord(c) - 65 for c in text.upper() if c.isalpha()]
+
+def nums_to_text(nums):
+    return ''.join(chr(int(n) % 26 + 65) for n in nums)
+
+def hill_encrypt(text, key):
+    nums = text_to_nums(text)
+    if len(nums) % 2:
+        nums.append(23)  # pad with 'X'
+    key = np.array(key)
+    out = []
+    for i in range(0, len(nums), 2):
+        vec = np.array(nums[i:i+2])
+        out.extend((key @ vec) % 26)
+    return nums_to_text(out)
+
+def hill_decrypt(text, key):
+    inv = matrix_mod_inv(np.array(key), 26)
+    nums = text_to_nums(text)
+    out = []
+    for i in range(0, len(nums), 2):
+        vec = np.array(nums[i:i+2])
+        out.extend((inv @ vec) % 26)
+    return nums_to_text(out)
+
+if __name__ == "__main__":
+    key = [[9,4],[5,7]]
+    pt = "meetmeatheusualplaceattenratherthaneightoclock".replace(" ", "")
+    ct = hill_encrypt(pt, key)
+    print("ciphertext:", ct)
+    print("recovered :", hill_decrypt(ct, key))
