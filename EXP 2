@@ -1,0 +1,53 @@
+"""
+2. Monoalphabetic Substitution Cipher
+Each plaintext letter maps to a single, unique ciphertext letter, defined
+by a permuted key alphabet supplied by the user (e.g.
+"QWERTYUIOPASDFGHJKLZXCVBNM").
+"""
+
+import string
+
+PLAIN_ALPHA = string.ascii_uppercase
+
+
+def is_valid_key(key: str) -> bool:
+    key = key.upper()
+    return len(key) == 26 and set(key) == set(PLAIN_ALPHA)
+
+
+def substitute(text: str, key: str, encrypt: bool) -> str:
+    key = key.upper()
+    if encrypt:
+        table = str.maketrans(PLAIN_ALPHA, key)
+    else:
+        table = str.maketrans(key, PLAIN_ALPHA)
+
+    result = []
+    for ch in text:
+        if ch.isalpha():
+            upper = ch.isupper()
+            mapped = ch.upper().translate(table)
+            result.append(mapped if upper else mapped.lower())
+        else:
+            result.append(ch)
+    return "".join(result)
+
+
+def main():
+    plaintext = input("Enter plaintext: ")
+    key = input("Enter 26-letter cipher key (permutation of A-Z, e.g.\n"
+                "QWERTYUIOPASDFGHJKLZXCVBNM): ")
+
+    if not is_valid_key(key):
+        print("Invalid key: must be a 26-letter permutation of the alphabet.")
+        return
+
+    ciphertext = substitute(plaintext, key, encrypt=True)
+    print("Ciphertext:", ciphertext)
+
+    recovered = substitute(ciphertext, key, encrypt=False)
+    print("Decrypted :", recovered)
+
+
+if __name__ == "__main__":
+    main()
