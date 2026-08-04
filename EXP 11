@@ -1,0 +1,12 @@
+import math
+
+total_arrangements = math.factorial(25)          # 25 letters in the 5x5 grid (I/J merged)
+print("total keys:", total_arrangements, "≈ 2^%.1f" % math.log2(total_arrangements))
+
+# Many arrangements encrypt identically:
+# - each of the 5 rows can be cyclically rotated (5 ways) without changing behavior: /5^5
+# - each of the 5 columns can be cyclically rotated (5 ways): /5^5
+# - the whole grid can be transposed (rows<->columns): /2
+redundancy = (5**5) * (5**5) * 2
+unique = total_arrangements / redundancy
+print("effectively unique keys ≈ 2^%.1f" % math.log2(unique))
