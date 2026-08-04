@@ -1,0 +1,39 @@
+import string
+
+ENGLISH_FREQ = {
+    'A':8.2,'B':1.5,'C':2.8,'D':4.3,'E':12.7,'F':2.2,'G':2.0,'H':6.1,
+    'I':7.0,'J':0.15,'K':0.77,'L':4.0,'M':2.4,'N':6.7,'O':7.5,'P':1.9,
+    'Q':0.095,'R':6.0,'S':6.3,'T':9.1,'U':2.8,'V':0.98,'W':2.4,'X':0.15,
+    'Y':2.0,'Z':0.074
+}
+
+def shift_text(text, k):
+    return ''.join(
+        chr((ord(c)-65-k) % 26 + 65) if c.isalpha() else c
+        for c in text.upper()
+    )
+
+def chi_squared(text):
+    text = [c for c in text if c.isalpha()]
+    n = len(text)
+    if n == 0:
+        return float('inf')
+    counts = {c: text.count(c) for c in string.ascii_uppercase}
+    return sum(
+        ((counts[c] - n*ENGLISH_FREQ[c]/100)**2) / (n*ENGLISH_FREQ[c]/100)
+        for c in string.ascii_uppercase
+    )
+
+def crack(ciphertext, top_n=10):
+    results = []
+    for k in range(26):
+        candidate = shift_text(ciphertext, k)
+        score = chi_squared(candidate)
+        results.append((score, k, candidate))
+    results.sort(key=lambda x: x[0])
+    return results[:top_n]
+
+if __name__ == "__main__":
+    ct = "WKLV LV D VHFUHW PHVVDJH"
+    for score, k, text in crack(ct, top_n=5):
+        print(f"shift={k:2d}  score={score:8.2f}  {text}")
