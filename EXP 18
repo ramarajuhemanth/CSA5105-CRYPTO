@@ -1,0 +1,15 @@
+key = input("Enter 56-bit binary key: ")
+
+left = key[:28]
+right = key[28:]
+
+print("\nSubkeys\n")
+
+for round in range(16):
+    left = left[1:] + left[0]
+    right = right[1:] + right[0]
+
+    subkey = left[:24] + right[:24]
+
+    print("Round", round + 1)
+    print(subkey)
