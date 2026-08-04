@@ -1,0 +1,58 @@
+from math import gcd
+def mod_inverse(a: int, m: int = 26) -> int:
+    a %= m
+    for x in range(1, m):
+        if (a * x) % m == 1:
+            return x
+    raise ValueError(f"{a} has no inverse mod {m}")
+
+
+def valid_a_values():
+    return [a for a in range(1, 26) if gcd(a, 26) == 1]
+
+
+def affine_encrypt(text: str, a: int, b: int) -> str:
+    result = []
+    for ch in text:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            p = ord(ch) - base
+            result.append(chr((a * p + b) % 26 + base))
+        else:
+            result.append(ch)
+    return "".join(result)
+
+
+def affine_decrypt(text: str, a: int, b: int) -> str:
+    a_inv = mod_inverse(a)
+    result = []
+    for ch in text:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            c = ord(ch) - base
+            result.append(chr((a_inv * (c - b)) % 26 + base))
+        else:
+            result.append(ch)
+    return "".join(result)
+
+
+def main():
+    print("Valid values of a (gcd(a,26)=1):", valid_a_values())
+
+    plaintext = input("Enter plaintext: ")
+    a = int(input("Enter a: "))
+    b = int(input("Enter b: "))
+
+    if gcd(a, 26) != 1:
+        print(f"Invalid a={a}: gcd(a,26) != 1, cipher would not be one-to-one.")
+        return
+
+    ciphertext = affine_encrypt(plaintext, a, b)
+    print("Ciphertext:", ciphertext)
+
+    recovered = affine_decrypt(ciphertext, a, b)
+    print("Decrypted :", recovered)
+
+
+if __name__ == "__main__":
+    main()
