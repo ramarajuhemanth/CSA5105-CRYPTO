@@ -1,0 +1,8 @@
+print("ECB Mode")
+print("Error in one ciphertext block affects only the corresponding plaintext block.\n")
+
+print("CBC Mode")
+print("Error in one ciphertext block affects:")
+print("1. The current plaintext block completely.")
+print("2. The next plaintext block by one bit.")
+print("3. Remaining blocks are not affected.")
