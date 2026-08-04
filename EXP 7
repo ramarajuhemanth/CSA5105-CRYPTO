@@ -1,0 +1,41 @@
+from collections import Counter
+
+# ASCII stand-ins are used for the original special characters:
+# '#' = the "of"-symbol (‡), '+' = the dagger (†),
+# '-' = the em-dash (—),   'P' = the paragraph mark (¶)
+CIPHERTEXT = (
+    "53##+305))6*;4826)4#.)4#);806*;48+8P60))85;;]8*;:#*8+83"
+    "(88)5*+;46(;88*96*?;8)*#(;485);5*+2:*#(;4956*2(5*-4)8P8*"
+    ";4069285);)6+8)4##;1(#9;48081;8:8#1;48+85;4)485+528806*81"
+    "(#9;48;(88;4(#?34;48)4#;161;:188;#?;"
+)
+
+# Key recovered by frequency + word analysis: cipher symbol -> plaintext letter
+DECODE_TABLE = {
+    '5': 'a', '#': 'o', '+': 'd', '8': 'e', '9': 'm', ':': 'y',
+    ';': 't', '?': 'u', ']': 'w', 'P': 'v', '-': 'c', '(': 'r',
+    ')': 's', '*': 'n', '.': 'p', '0': 'l', '1': 'f', '2': 'b',
+    '3': 'g', '4': 'h', '6': 'i',
+}
+
+
+def frequency_count(text: str) -> Counter:
+    return Counter(text)
+
+
+def decrypt(text: str, table: dict) -> str:
+    return "".join(table.get(ch, '?') for ch in text)
+
+
+def main():
+    freqs = frequency_count(CIPHERTEXT)
+    print("Symbol frequency count:")
+    for symbol, count in sorted(freqs.items()):
+        print(f"  '{symbol}' : {count}")
+
+    print("\nDecrypted plaintext:")
+    print(decrypt(CIPHERTEXT, DECODE_TABLE))
+
+
+if __name__ == "__main__":
+    main()
