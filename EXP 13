@@ -1,0 +1,20 @@
+import numpy as np
+
+def matrix_mod_inv2(m, mod=26):
+    det = int(round(np.linalg.det(m))) % mod
+    det_inv = pow(det, -1, mod)
+    adj = np.array([[m[1][1], -m[0][1]], [-m[1][0], m[0][0]]])
+    return (det_inv * adj) % mod
+
+def recover_key(plain_pairs, cipher_pairs):
+    """plain_pairs, cipher_pairs: each a 2x2 matrix of two digraphs (numeric 0-25)."""
+    P = np.array(plain_pairs)
+    C = np.array(cipher_pairs)
+    P_inv = matrix_mod_inv2(P, 26)
+    K = (C @ P_inv) % 26
+    return K
+
+# Example: two known plaintext/ciphertext digraph pairs (as letter-index pairs)
+P = [[7, 4], [12, 19]]   # e.g. digraphs "HE","MT" as indices -- replace with real data
+C = [[6, 9], [15, 20]]
+print(recover_key(P, C))
