@@ -1,0 +1,30 @@
+def caesar_encrypt(text: str, k: int) -> str:
+    k %= 26
+    result = []
+    for ch in text:
+        if ch.isupper():
+            result.append(chr((ord(ch) - ord('A') + k) % 26 + ord('A')))
+        elif ch.islower():
+            result.append(chr((ord(ch) - ord('a') + k) % 26 + ord('a')))
+        else:
+            result.append(ch)  # non-alphabetic characters left unchanged
+    return "".join(result)
+ 
+ 
+def caesar_decrypt(text: str, k: int) -> str:
+    return caesar_encrypt(text, 26 - (k % 26))
+ 
+ 
+def main():
+    plaintext = input("Enter plaintext: ")
+    k = int(input("Enter key k (1-25): "))
+ 
+    ciphertext = caesar_encrypt(plaintext, k)
+    print("Ciphertext:", ciphertext)
+ 
+    recovered = caesar_decrypt(ciphertext, k)
+    print("Decrypted :", recovered)
+ 
+ 
+if __name__ == "__main__":
+    main()
