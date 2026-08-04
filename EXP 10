@@ -1,0 +1,38 @@
+matrix = [
+    ['M','F','H','I','K'],
+    ['U','N','O','P','Q'],
+    ['Z','V','W','X','Y'],
+    ['E','L','A','R','G'],
+    ['D','S','T','B','C'],
+]
+
+def find_pos(m, c):
+    c = 'I' if c == 'J' else c
+    for r, row in enumerate(m):
+        if c in row:
+            return r, row.index(c)
+
+def prepare(text):
+    text = ''.join(c for c in text.upper() if c.isalpha()).replace("J", "I")
+    pairs, i = [], 0
+    while i < len(text):
+        a = text[i]
+        b = text[i+1] if i+1 < len(text) else 'X'
+        if a == b:
+            pairs.append(a+'X'); i += 1
+        else:
+            pairs.append(a+b); i += 2
+    if len(pairs[-1]) == 1:
+        pairs[-1] += 'X'
+    return pairs
+
+def encrypt(text, m=matrix):
+    out = []
+    for a, b in prepare(text):
+        r1,c1 = find_pos(m,a); r2,c2 = find_pos(m,b)
+        if r1==r2:   out.append(m[r1][(c1+1)%5]+m[r2][(c2+1)%5])
+        elif c1==c2: out.append(m[(r1+1)%5][c1]+m[(r2+1)%5][c2])
+        else:        out.append(m[r1][c2]+m[r2][c1])
+    return ''.join(out)
+
+print(encrypt("Must see you over Cadogan West. Coming at once."))
