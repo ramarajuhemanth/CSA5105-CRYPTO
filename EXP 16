@@ -1,0 +1,30 @@
+from collections import Counter
+
+cipher = input("Enter ciphertext: ").lower()
+
+english = "etaoinshrdlcumwfgypbvkjxqz"
+
+# Count frequencies
+freq = Counter(c for c in cipher if c.isalpha())
+
+cipher_order = "".join([x[0] for x in freq.most_common()])
+
+print("\nTop 10 Possible Plaintexts:\n")
+
+for guess in range(10):
+    mapping = {}
+
+    for i in range(min(len(cipher_order), len(english))):
+        mapping[cipher_order[i]] = english[(i + guess) % 26]
+
+    plaintext = ""
+
+    for ch in cipher:
+        if ch.isalpha():
+            plaintext += mapping.get(ch, ch)
+        else:
+            plaintext += ch
+
+    print("Guess", guess + 1)
+    print(plaintext)
+    print()
