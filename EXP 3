@@ -1,0 +1,100 @@
+def build_matrix(keyword: str):
+    used = set("J")  # I and J share a cell -> J is folded into I
+    letters = []
+
+    for ch in keyword.upper():
+        if not ch.isalpha():
+            continue
+        if ch == 'J':
+            ch = 'I'
+        if ch not in used:
+            used.add(ch)
+            letters.append(ch)
+
+    for ch in "ABCDEFGHIKLMNOPQRSTUVWXYZ":  # note: no J
+        if ch not in used:
+            used.add(ch)
+            letters.append(ch)
+
+    matrix = [letters[i:i + 5] for i in range(0, 25, 5)]
+    return matrix
+
+
+def find_pos(matrix, ch):
+    if ch == 'J':
+        ch = 'I'
+    for r in range(5):
+        for c in range(5):
+            if matrix[r][c] == ch:
+                return r, c
+    raise ValueError(f"Letter {ch} not in matrix")
+
+
+def prepare_text(text: str) -> str:
+    letters = [ch.upper() if ch.upper() != 'J' else 'I'
+               for ch in text if ch.isalpha()]
+
+    prepared = []
+    i = 0
+    while i < len(letters):
+        a = letters[i]
+        prepared.append(a)
+        if i + 1 < len(letters):
+            b = letters[i + 1]
+            if a == b:
+                prepared.append('X')  # insert filler between repeats
+                i += 1
+            else:
+                prepared.append(b)
+                i += 2
+        else:
+            i += 1
+
+    if len(prepared) % 2 != 0:
+        prepared.append('X')  # pad odd-length text
+
+    return "".join(prepared)
+
+
+def playfair(text: str, matrix, encrypt: bool) -> str:
+    shift = 1 if encrypt else -1
+    result = []
+
+    for i in range(0, len(text), 2):
+        r1, c1 = find_pos(matrix, text[i])
+        r2, c2 = find_pos(matrix, text[i + 1])
+
+        if r1 == r2:  # same row
+            result.append(matrix[r1][(c1 + shift) % 5])
+            result.append(matrix[r2][(c2 + shift) % 5])
+        elif c1 == c2:  # same column
+            result.append(matrix[(r1 + shift) % 5][c1])
+            result.append(matrix[(r2 + shift) % 5][c2])
+        else:  # rectangle: swap columns
+            result.append(matrix[r1][c2])
+            result.append(matrix[r2][c1])
+
+    return "".join(result)
+
+
+def main():
+    keyword = input("Enter keyword: ")
+    plaintext = input("Enter plaintext: ")
+
+    matrix = build_matrix(keyword)
+    print("\nKey matrix:")
+    for row in matrix:
+        print(" ".join(row))
+
+    prepared = prepare_text(plaintext)
+    print("\nPrepared plaintext:", prepared)
+
+    ciphertext = playfair(prepared, matrix, encrypt=True)
+    print("Ciphertext:", ciphertext)
+
+    recovered = playfair(ciphertext, matrix, encrypt=False)
+    print("Decrypted :", recovered)
+
+
+if __name__ == "__main__":
+    main()
