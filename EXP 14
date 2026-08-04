@@ -1,0 +1,18 @@
+def encrypt(text, keystream):
+    text = text.replace(" ", "").upper()
+    return ''.join(chr((ord(p)-65 + k) % 26 + 65) for p, k in zip(text, keystream))
+
+def decrypt(cipher, keystream):
+    return ''.join(chr((ord(c)-65 - k) % 26 + 65) for c, k in zip(cipher, keystream))
+
+def find_key(cipher, target_plain):
+    return [(ord(c)-65 - (ord(p)-65)) % 26 for c, p in zip(cipher, target_plain.upper())]
+
+if __name__ == "__main__":
+    key1 = [9,0,1,7,23,15,21,14,11,11,2,8,9]
+    ct = encrypt("sendmoremoney", key1)
+    print("a) ciphertext:", ct)
+
+    key2 = find_key(ct, "cashnotneeded")
+    print("b) key:", key2)
+    print("   check:", decrypt(ct, key2))
