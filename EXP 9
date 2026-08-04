@@ -1,0 +1,26 @@
+import string
+
+def cipher_alphabet(keyword):
+    seen = []
+    for c in keyword.upper():
+        if c.isalpha() and c not in seen:
+            seen.append(c)
+    for c in string.ascii_uppercase:
+        if c not in seen:
+            seen.append(c)
+    return ''.join(seen)
+
+def encrypt(text, keyword):
+    table = str.maketrans(string.ascii_uppercase, cipher_alphabet(keyword))
+    return text.upper().translate(table)
+
+def decrypt(text, keyword):
+    table = str.maketrans(cipher_alphabet(keyword), string.ascii_uppercase)
+    return text.upper().translate(table)
+
+if __name__ == "__main__":
+    kw = "CIPHER"
+    print("cipher alphabet:", cipher_alphabet(kw))   # CIPHERADFGJKLMNOQSTUVWXYZ
+    ct = encrypt("attack at dawn", kw)
+    print("encrypted:", ct)
+    print("decrypted:", decrypt(ct, kw))
