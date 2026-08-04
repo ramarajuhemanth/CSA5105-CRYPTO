@@ -1,0 +1,43 @@
+def vigenere_encrypt(text: str, key: str) -> str:
+    key = [k for k in key.upper() if k.isalpha()]
+    result = []
+    j = 0
+    for ch in text:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            k = ord(key[j % len(key)]) - ord('A')
+            result.append(chr((ord(ch) - base + k) % 26 + base))
+            j += 1
+        else:
+            result.append(ch)
+    return "".join(result)
+
+
+def vigenere_decrypt(text: str, key: str) -> str:
+    key = [k for k in key.upper() if k.isalpha()]
+    result = []
+    j = 0
+    for ch in text:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            k = ord(key[j % len(key)]) - ord('A')
+            result.append(chr((ord(ch) - base - k) % 26 + base))
+            j += 1
+        else:
+            result.append(ch)
+    return "".join(result)
+
+
+def main():
+    plaintext = input("Enter plaintext: ")
+    key = input("Enter keyword (letters only): ")
+
+    ciphertext = vigenere_encrypt(plaintext, key)
+    print("Ciphertext:", ciphertext)
+
+    recovered = vigenere_decrypt(ciphertext, key)
+    print("Decrypted :", recovered)
+
+
+if __name__ == "__main__":
+    main()
